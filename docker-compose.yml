@@ -7,10 +7,21 @@ services:
       - "5000:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=db;Database=TuBaseDeDatos;User Id=sa;Password=StrongPass1!;Trusted_Connection=False;MultipleActiveResultSets=true;
-      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Server=db;Database=TuBaseDeDatos;User Id=sa;Password=StrongPass1!;Trusted_Connection=False;MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False;
+      - ASPNETCORE_URLS=http://+:5000      
+      - EMAIL_SERVICE=mail.bellseboss.com
+      - EMAIL_SERVICE_PORT=465
+      - EMAIL_USER=info@bellseboss.com
+      - EMAIL_PASSWORD=info_bellseboss.com
+      - EMAIL_FROM=info@bellseboss.com
+      - FILE_HTML_EMAIL=./wwwroot/emails/get_game_v2.html
+      - EMAIL_DESCRIPTION=This text is the description of the email from env file
+      - EMAIL_ENDPOINT=https://mkoc.bellseboss.com/get_game/
+      - EMAIL_SUBJECT=Get the Game from this link
     depends_on:
       - db
+    networks:
+      - nat
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -21,6 +32,20 @@ services:
       - "1433:1433"
     volumes:
       - sql_data:/var/opt/mssql
+    networks:
+      - nat
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - nat
 
 volumes:
   sql_data:
+
+networks:
+  nat:
+    external: true
